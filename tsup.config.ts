@@ -3,13 +3,8 @@ import { defineConfig } from "tsup";
 export default defineConfig({
   entry: [
     "src/index.ts",
-    "src/ropa/index.ts",
-    "src/dpa/index.ts",
-    "src/toms/index.ts",
-    "src/supplier/index.ts",
-    "src/asset/index.ts",
-    "src/risk/index.ts",
-    "src/incident/index.ts",
+    "src/enums.ts",
+    "src/schema/index.ts",
     "src/frameworks/index.ts",
     "src/satisfaction-pairs.ts",
     "src/mappings/nis2-gdpr.ts",
@@ -20,4 +15,5 @@ export default defineConfig({
   sourcemap: true,
   splitting: false,
   treeshake: true,
+  external: ["drizzle-orm", "drizzle-zod", "zod"],
 });

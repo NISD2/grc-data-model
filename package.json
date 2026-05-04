@@ -31,37 +31,13 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./ropa": {
-      "types": "./dist/ropa/index.d.ts",
-      "import": "./dist/ropa/index.js"
+    "./enums": {
+      "types": "./dist/enums.d.ts",
+      "import": "./dist/enums.js"
     },
-    "./dpa": {
-      "types": "./dist/dpa/index.d.ts",
-      "import": "./dist/dpa/index.js"
-    },
-    "./toms": {
-      "types": "./dist/toms/index.d.ts",
-      "import": "./dist/toms/index.js"
-    },
-    "./supplier": {
-      "types": "./dist/supplier/index.d.ts",
-      "import": "./dist/supplier/index.js"
-    },
-    "./asset": {
-      "types": "./dist/asset/index.d.ts",
-      "import": "./dist/asset/index.js"
-    },
-    "./risk": {
-      "types": "./dist/risk/index.d.ts",
-      "import": "./dist/risk/index.js"
-    },
-    "./incident": {
-      "types": "./dist/incident/index.d.ts",
-      "import": "./dist/incident/index.js"
-    },
-    "./mappings/nis2-gdpr": {
-      "types": "./dist/mappings/nis2-gdpr.d.ts",
-      "import": "./dist/mappings/nis2-gdpr.js"
+    "./schema": {
+      "types": "./dist/schema/index.d.ts",
+      "import": "./dist/schema/index.js"
     },
     "./frameworks": {
       "types": "./dist/frameworks/index.d.ts",
@@ -70,6 +46,10 @@
     "./satisfaction-pairs": {
       "types": "./dist/satisfaction-pairs.d.ts",
       "import": "./dist/satisfaction-pairs.js"
+    },
+    "./mappings/nis2-gdpr": {
+      "types": "./dist/mappings/nis2-gdpr.d.ts",
+      "import": "./dist/mappings/nis2-gdpr.js"
     }
   },
   "files": [
@@ -87,6 +67,8 @@
     "release": "bun run build && changeset publish"
   },
   "dependencies": {
+    "drizzle-orm": "^0.45.0",
+    "drizzle-zod": "^0.8.0",
     "zod": "^4.0.0"
   },
   "devDependencies": {
