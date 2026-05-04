@@ -1,0 +1,10 @@
+export * from "./ropa";
+export * from "./dpa";
+export * from "./toms";
+export * from "./supplier";
+export * from "./asset";
+export * from "./risk";
+export * from "./incident";
+export * from "./frameworks";
+export * from "./satisfaction-pairs";
+export * as Nis2GdprMapping from "./mappings/nis2-gdpr";
