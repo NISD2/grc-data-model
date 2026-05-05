@@ -43,3 +43,36 @@ export interface FrameworkRequirement {
   moduleRef: string | null;
   requiredSignOffRole: string | null;
 }
+
+export interface RequirementOptions {
+  priority?: Priority;
+  importance?: Importance;
+  frequency?: Frequency;
+  legalRef?: string;
+  directiveArticle?: string;
+  moduleRef?: string;
+  requiredSignOffRole?: string;
+}
+
+export function makeRequirementFactory(idPrefix: string) {
+  let n = 0;
+  return function mkReq(
+    code: string,
+    evidenceType: EvidenceType,
+    opts: RequirementOptions = {},
+  ): FrameworkRequirement {
+    n++;
+    return {
+      id: `${idPrefix}-${n}`,
+      code,
+      evidenceType,
+      frequency: opts.frequency ?? "annual",
+      priority: opts.priority ?? "P1",
+      importance: opts.importance ?? "mandatory",
+      legalRef: opts.legalRef ?? "",
+      directiveArticle: opts.directiveArticle ?? null,
+      moduleRef: opts.moduleRef ?? null,
+      requiredSignOffRole: opts.requiredSignOffRole ?? null,
+    };
+  };
+}

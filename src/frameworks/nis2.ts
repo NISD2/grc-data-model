@@ -1,40 +1,7 @@
-import type {
-  FrameworkCategory,
-  FrameworkRequirement,
-  EvidenceType,
-  Frequency,
-  Importance,
-  Priority,
-} from "./types";
+import type { FrameworkCategory, FrameworkRequirement } from "./types";
+import { makeRequirementFactory } from "./types";
 
-let _id = 0;
-function mkReq(
-  code: string,
-  evidenceType: EvidenceType,
-  opts: {
-    priority?: Priority;
-    importance?: Importance;
-    frequency?: Frequency;
-    legalRef?: string;
-    directiveArticle?: string;
-    moduleRef?: string;
-    requiredSignOffRole?: string;
-  } = {},
-): FrameworkRequirement {
-  _id++;
-  return {
-    id: `nis2-req-${_id}`,
-    code,
-    evidenceType,
-    frequency: opts.frequency ?? "annual",
-    priority: opts.priority ?? "P1",
-    importance: opts.importance ?? "mandatory",
-    legalRef: opts.legalRef ?? "",
-    directiveArticle: opts.directiveArticle ?? null,
-    moduleRef: opts.moduleRef ?? null,
-    requiredSignOffRole: opts.requiredSignOffRole ?? null,
-  };
-}
+const mkReq = makeRequirementFactory("nis2-req");
 
 export const nis2Categories: FrameworkCategory[] = [
   { id: "cat-01", code: "GOV", slug: "governance", nis2Url: "https://www.nis-2-directive.com/NIS_2_Directive_Article_20.html", bsigUrl: "https://www.gesetze-im-internet.de/bsig_2025/__38.html", sortOrder: 1, estimatedMinutes: 45, relevantRoles: ["ceo"], grundschutzModule: "ISMS.1" },
