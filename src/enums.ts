@@ -89,22 +89,10 @@ export const supplierRelationshipStatusEnum = pgEnum("supplier_relationship_stat
   "bounced",
 ]);
 
-export const supplierPublicationBroadcastStatusEnum = pgEnum(
-  "supplier_publication_broadcast_status",
-  ["queued", "sending", "sent", "failed"],
-);
-
 export const transferMechanismEnum = pgEnum("transfer_mechanism", [
   "adequacy",
   "sccs",
   "bcr",
   "derogation",
   "none",
-]);
-
-export const assetServiceTypeEnum = pgEnum("asset_service_type", [
-  "saas",
-  "on_prem",
-  "pro_services",
-  "managed",
 ]);

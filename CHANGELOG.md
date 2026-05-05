@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.0 — 2026-05-05
+
+### Removed
+- Supplier-portal-specific columns from `incident` (`customer_relationship_id`, `broadcast_status`, `broadcast_sent_at`, `broadcast_count`) and `asset` (`customer_relationship_id`, `service_type`, `service_description`, `data_processing_locations`, `saas_hosting_region`, `on_prem_*`, `pro_services_*`, `managed_*`). These were Sorzel-platform-specific and didn't belong on a generic GRC schema.
+- `assetServiceTypeEnum` and `supplierPublicationBroadcastStatusEnum` (consumed only by the removed columns).
+- Cross-table FK constraints from incident/asset to supplier (no longer needed).
+
+Consumers who used these fields should add their own join tables in their app.
+
 ## 0.2.0 — 2026-05-05
 
 ### Added
