@@ -1,15 +1,3 @@
-/**
- * Assets — IT/OT asset inventory
- *
- * Cross-domain table used by:
- *   02 Risk management  — asset-linked risks
- *   04 Business continuity — RTO/RPO targets, backup config
- *   09 Cryptography — encryption flags
- *   10 Access control — asset ownership
- *   11 Authentication — MFA deployment tracking
- *
- * References: companies
- */
 import {
   pgTable,
   uuid,
@@ -112,13 +100,11 @@ export const asset = pgTable(
     // Lifecycle (CIR 2024/2690 Recital — end-of-life date)
     endOfLife: date("end_of_life"),
 
-    // ─────────────────────────────────────────────────────────────────────
     // Supplier-portal branch fields — only meaningful when serviceType is
     // set. Each branch is keyed off serviceType so the form only renders
     // the matching block. Re-uses the existing `hasMfa`, `encryptionAtRest`,
     // `encryptionInTransit`, and `rto` columns above for the SaaS branch
     // (those are general asset attributes, not SaaS-only).
-    // ─────────────────────────────────────────────────────────────────────
 
     // SaaS branch (BSI IT-Grundschutz OPS.2.2 Cloud-Nutzung)
     /** Where customer data is hosted. eu | de_only | global */

@@ -1,9 +1,3 @@
-/**
- * Compliance Frameworks — Regulatory frameworks and their requirement categories
- *
- * Multi-framework by design: NIS2/BSIG today, GDPR/ISO 27001/Arbeitsschutz tomorrow.
- * Each framework has ordered categories (the 12 NIS2 domains, etc.).
- */
 import {
   pgTable,
   uuid,
@@ -16,10 +10,6 @@ import {
   index,
 } from "drizzle-orm/pg-core";
 import { frameworkEnum } from "../enums";
-
-// ---------------------------------------------------------------------------
-// Compliance Frameworks — NIS2, GDPR, ISO 27001, etc.
-// ---------------------------------------------------------------------------
 
 export const complianceFramework = pgTable("compliance_framework", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -36,9 +26,6 @@ export const complianceFramework = pgTable("compliance_framework", {
   index("idx_framework_active").on(table.isActive),
 ]);
 
-// ---------------------------------------------------------------------------
-// Requirement Categories — The 12 NIS2 domains (extensible per framework)
-// ---------------------------------------------------------------------------
 
 export const requirementCategory = pgTable("requirement_category", {
   id: uuid("id").primaryKey().defaultRandom(),

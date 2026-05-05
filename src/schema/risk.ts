@@ -20,10 +20,6 @@ import {
 import { asset } from "./asset";
 import { supplier } from "./supplier";
 
-// ---------------------------------------------------------------------------
-// Risks — Individual risk register entries
-// ---------------------------------------------------------------------------
-
 export const risk = pgTable(
   "risk",
   {
@@ -67,10 +63,6 @@ export const risk = pgTable(
   ]
 );
 
-// ---------------------------------------------------------------------------
-// Risk–Asset junction — Which assets are affected by each risk
-// ---------------------------------------------------------------------------
-
 export const riskAsset = pgTable(
   "risk_asset",
   {
@@ -88,10 +80,6 @@ export const riskAsset = pgTable(
     uniqueIndex("idx_risk_assets_pair").on(table.riskId, table.assetId),
   ]
 );
-
-// ---------------------------------------------------------------------------
-// Risk–Supplier junction — Which suppliers are associated with each risk
-// ---------------------------------------------------------------------------
 
 export const riskSupplier = pgTable(
   "risk_supplier",

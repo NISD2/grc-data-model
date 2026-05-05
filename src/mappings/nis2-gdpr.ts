@@ -1,21 +1,6 @@
-/**
- * NIS2 ↔ GDPR field-level mapping.
- *
- * Each row asserts a relationship between an EU-level NIS2 obligation
- * and an EU-level GDPR obligation. Linktype indicates the nature of
- * the relationship — `shared_data` means the same row in our data
- * model serves both regimes; `parallel_workflow` means separate
- * obligations triggered by the same event.
- *
- * Sources: ENISA NIS2 Technical Implementation Guidance v1.0; EDPB
- * guidelines; cross-referenced against Paolo Carner's NIS2 SMB Toolkit
- * (CC BY 4.0).
- */
+// Sources: ENISA NIS2 Technical Implementation Guidance v1.0; EDPB guidelines.
 
-export type LinkType =
-  | "shared_data"          // same row serves both regimes
-  | "parallel_workflow"    // separate obligations, common trigger
-  | "informational";       // related but not legally coupled
+export type LinkType = "shared_data" | "parallel_workflow" | "informational";
 
 export interface MappingRow {
   nis2Article: string;
@@ -75,12 +60,10 @@ export const nis2GdprMapping: MappingRow[] = [
   },
 ];
 
-/** Helper: filter mapping rows by NIS2 article. */
 export function findByNis2Article(article: string): MappingRow[] {
   return nis2GdprMapping.filter((row) => row.nis2Article === article);
 }
 
-/** Helper: filter mapping rows by GDPR article. */
 export function findByGdprArticle(article: string): MappingRow[] {
   return nis2GdprMapping.filter((row) => row.gdprArticle === article);
 }

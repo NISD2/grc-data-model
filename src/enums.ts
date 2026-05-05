@@ -1,15 +1,6 @@
 import { pgEnum } from "drizzle-orm/pg-core";
 
-// ============================================================================
-// ENUMS — Single source of truth for all PostgreSQL enum types.
-// PG CREATE TYPE must be defined exactly once. Every table file imports from here.
-// ============================================================================
-
-export const planEnum = pgEnum("plan", [
-  "free",
-  "guided",     // €500/month
-  "enterprise", // €2,500/month
-]);
+export const planEnum = pgEnum("plan", ["free", "guided", "enterprise"]);
 
 export const entityTypeEnum = pgEnum("entity_type", [
   "essential", // besonders wichtige Einrichtung
@@ -53,7 +44,6 @@ export const itemStatusEnum = pgEnum("item_status", [
   "rejected", // Reviewer requires changes
 ]);
 
-// --- Domain-specific enums (03-incident-handling) ---
 
 export const incidentSeverityEnum = pgEnum("incident_severity", [
   "near_miss", // Beinahevorfall - could have caused impact but didn't
@@ -76,7 +66,6 @@ export const situationColorEnum = pgEnum("situation_color", [
   "gray", // No current incidents
 ]);
 
-// --- Domain-specific enums (05-supply-chain) ---
 
 export const supplierAuditFrequencyEnum = pgEnum("supplier_audit_frequency", [
   "annual",
@@ -91,7 +80,6 @@ export const supplierRiskLevelEnum = pgEnum("supplier_risk_level", [
   "low", // Minimal impact
 ]);
 
-// --- Evidence lifecycle (review workflow) ---
 
 export const evidenceStatusEnum = pgEnum("evidence_status", [
   "draft", // Uploaded but not yet submitted for review
@@ -101,7 +89,6 @@ export const evidenceStatusEnum = pgEnum("evidence_status", [
   "expired", // Was approved but validity period has lapsed
 ]);
 
-// --- Requirement importance (BSI Grundschutz-inspired tiers) ---
 
 export const requirementImportanceEnum = pgEnum("requirement_importance", [
   "mandatory", // MUSS — legally required, no exceptions (BSI: Basis-Anforderung)
@@ -109,7 +96,6 @@ export const requirementImportanceEnum = pgEnum("requirement_importance", [
   "enhanced", // KANN — additional for high-protection needs (BSI: Erhöhter Schutzbedarf)
 ]);
 
-// --- Requirement effort/complexity for Mittelstand sizing ---
 
 export const effortLevelEnum = pgEnum("effort_level", [
   "trivial", // < 1 day, single person, no external help
@@ -119,7 +105,6 @@ export const effortLevelEnum = pgEnum("effort_level", [
   "major", // 3+ months, organizational change, likely needs external help
 ]);
 
-// --- Framework enum (multi-framework support) ---
 
 export const frameworkEnum = pgEnum("framework", [
   "nis2", // NIS2 / BSIG 2025
@@ -145,9 +130,6 @@ export const transferMechanismEnum = pgEnum("transfer_mechanism", [
   "none",       // no transfer outside EEA
 ]);
 
-// ============================================================================
-// Operations — Enums for operational tracking tables
-// ============================================================================
 
 export const changeTypeEnum = pgEnum("change_type", [
   "standard", // Pre-approved, routine (no individual approval)
@@ -225,7 +207,6 @@ export const kpiStatusEnum = pgEnum("kpi_status", [
   "red", // Below target
 ]);
 
-// --- Notification delivery tracking ---
 
 export const notificationChannelEnum = pgEnum("notification_channel", [
   "email",
@@ -257,7 +238,6 @@ export const vulnerabilityStatusEnum = pgEnum("vulnerability_status", [
   "mitigated", // Compensating control in place
 ]);
 
-// --- AI data sharing (controls what org data is sent to LLM) ---
 
 export const aiDataSharingEnum = pgEnum("ai_data_sharing", [
   "none", // Only field names, types, requirement title
@@ -265,14 +245,7 @@ export const aiDataSharingEnum = pgEnum("ai_data_sharing", [
   "full", // + company name, employee count, annual revenue
 ]);
 
-// ============================================================================
-// Supplier Portal — Generic form engine + supplier-specific tables
-// ============================================================================
 
-// --- Per-asset service type ---
-// Replaces the company-level isSaas/isOnPrem/isProfessionalServices/isManagedService
-// flags. One supplier can sell multiple service types — one asset per offering,
-// each carrying its own service-type and matching branch fields.
 export const assetServiceTypeEnum = pgEnum("asset_service_type", [
   "saas",          // Cloud-hosted multi-tenant service
   "on_prem",       // Software the customer installs and runs themselves
@@ -280,7 +253,6 @@ export const assetServiceTypeEnum = pgEnum("asset_service_type", [
   "managed",       // Managed service (supplier operates customer infrastructure)
 ]);
 
-// --- Supplier portal lifecycle ---
 
 export const supplierRelationshipStatusEnum = pgEnum("supplier_relationship_status", [
   "active", // Supplier invited the customer; access link is live
@@ -310,7 +282,6 @@ export const supplierPublicationBroadcastStatusEnum = pgEnum(
   ],
 );
 
-// --- Lead intent (for unified onboarding via /applicability) ---
 
 export const leadIntentEnum = pgEnum("lead_intent", [
   "entity", // Wants to use the NIS2 compliance side

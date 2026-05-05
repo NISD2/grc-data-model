@@ -1,13 +1,3 @@
-/**
- * Incidents — Security incident tracking
- *
- * Framework-agnostic incident records with classification, timeline,
- * CIA impact, and root cause analysis. Framework-specific reporting
- * workflows (BSI Meldeportal, DSGVO Art. 33, etc.) live in their
- * respective modules under schema/modules/.
- *
- * References: companies, users
- */
 import {
   pgTable,
   uuid,
@@ -26,10 +16,6 @@ import {
   supplierPublicationBroadcastStatusEnum,
 } from "../enums";
 import { supplier } from "./supplier";
-
-// ---------------------------------------------------------------------------
-// Incidents — Security incident records (bilateral)
-// ---------------------------------------------------------------------------
 
 export const incident = pgTable(
   "incident",
@@ -106,9 +92,7 @@ export const incident = pgTable(
     internalRef: varchar("internal_ref", { length: 100 }),
     createdBy: uuid("created_by"),
 
-    // ─────────────────────────────────────────────────────────────────────
     // Supplier-broadcast queue (only meaningful when customerRelationshipId is set)
-    // ─────────────────────────────────────────────────────────────────────
 
     /** Broadcast queue state — null for entity-side incidents. */
     broadcastStatus: supplierPublicationBroadcastStatusEnum("broadcast_status"),

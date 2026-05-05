@@ -1,28 +1,3 @@
-/**
- * Suppliers — Bilateral supplier↔customer relationship table
- *
- * One table for both sides of the supplier relationship:
- *
- *   - Entity-side inventory (legacy CIR §5.2 supplier register): rows where
- *     `customerCompanyId = entity`, `supplierCompanyId = NULL` (free-text
- *     supplier name + classification fields).
- *
- *   - Supplier-portal share (Direction A — supplier creates, customer reads
- *     via token): rows where `supplierCompanyId = supplier`, the customer is
- *     identified by `customerEmail` (and possibly `customerCompanyId` if they
- *     also have a Sorzel account).
- *
- *   - Direction B (entity invites supplier via magic link): row created with
- *     `customerCompanyId = entity`. On supplier accept, `supplierCompanyId`
- *     is filled in via supplier-onboarding.acceptInvite.
- *
- * Reads:
- *   - Entity views their suppliers: `WHERE customerCompanyId = ctx.companyId`
- *   - Supplier views their customers: `WHERE supplierCompanyId = ctx.companyId`
- *   - Token-gated public view: `WHERE unsubscribeToken = X AND status = 'active'`
- *
- * References: companies, users
- */
 import {
   pgTable,
   uuid,
@@ -48,9 +23,7 @@ export const supplier = pgTable(
   {
     id: uuid("id").primaryKey().defaultRandom(),
 
-    // ─────────────────────────────────────────────────────────────────────
     // Bilateral relationship parties
-    // ─────────────────────────────────────────────────────────────────────
 
     /**
      * The customer's Sorzel company. Always set for entity-side inventory
@@ -82,9 +55,7 @@ export const supplier = pgTable(
      */
     customerOrgName: varchar("customer_org_name", { length: 500 }),
 
-    // ─────────────────────────────────────────────────────────────────────
     // Display
-    // ─────────────────────────────────────────────────────────────────────
 
     /** Supplier display name. Free text for legacy rows; mirrors company.name when supplierCompanyId is set. */
     name: varchar("name", { length: 255 }).notNull(),
@@ -92,10 +63,8 @@ export const supplier = pgTable(
     contactEmail: varchar("contact_email", { length: 255 }),
     contactName: varchar("contact_name", { length: 255 }),
 
-    // ─────────────────────────────────────────────────────────────────────
     // Entity-side classification (CIR §5.2 supplier register fields)
     // Only meaningful when the customer-side entity is managing this row.
-    // ─────────────────────────────────────────────────────────────────────
 
     riskLevel: supplierRiskLevelEnum("risk_level").default("medium"),
     serviceType: varchar("service_type", { length: 255 }),
@@ -127,7 +96,6 @@ export const supplier = pgTable(
     lastReviewDate: date("last_review_date"),
     dueDiligenceProcess: text("due_diligence_process"),
 
-    // ─────────────────────────────────────────────────────────────────────
     // Per-customer contract clauses (supplier-portal)
     //
     // These move from the company table — they vary per customer (each
@@ -138,7 +106,6 @@ export const supplier = pgTable(
     // relationship (supplierCompanyId set). For legacy entity-side
     // inventory rows the entity records its own answers in their own
     // contract management — these columns stay null.
-    // ─────────────────────────────────────────────────────────────────────
 
     /** CIR §5.1.4(e) — accept third-party right to audit / provide audit reports. */
     acceptRightToAudit: boolean("accept_right_to_audit"),
@@ -173,10 +140,8 @@ export const supplier = pgTable(
     /** Incident response SLA (hours) the supplier commits to THIS customer. */
     incidentSlaHours: integer("incident_sla_hours"),
 
-    // ─────────────────────────────────────────────────────────────────────
     // Supplier-portal share state (only meaningful when supplierCompanyId
     // is set AND the share was created via the supplier portal)
-    // ─────────────────────────────────────────────────────────────────────
 
     /**
      * 64-char hex bearer token. Knowing this token grants read access to the
