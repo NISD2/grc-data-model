@@ -67,9 +67,7 @@
     "release": "bun run build && changeset publish"
   },
   "dependencies": {
-    "drizzle-orm": "^0.45.0",
-    "drizzle-zod": "^0.8.0",
-    "zod": "^4.0.0"
+    "drizzle-orm": "^0.45.0"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.0",

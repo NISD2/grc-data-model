@@ -44,6 +44,10 @@ Out: tenant root (`company`, `user`), audit log, notifications, portals — thos
 
 Cross-boundary FK constraints (e.g. `supplier.company_id → company.id`) are not declared in this package; the consumer's own migration adds them.
 
+## Stability
+
+All top-level exports follow semver. Breaking changes (renaming, removing, or restructuring exported tables, enums, frameworks data, or satisfaction pairs) bump the major version. New tables, columns, requirements, or pairs ship as a minor bump.
+
 ## Licence
 
 MIT.

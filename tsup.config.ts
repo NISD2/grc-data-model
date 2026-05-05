@@ -15,5 +15,5 @@ export default defineConfig({
   sourcemap: true,
   splitting: false,
   treeshake: true,
-  external: ["drizzle-orm", "drizzle-zod", "zod"],
+  external: ["drizzle-orm"],
 });
