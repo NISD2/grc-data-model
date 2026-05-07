@@ -1,8 +1,8 @@
 # @nisd2/grc-data-model
 
-Drizzle ORM schemas for NIS2 + GDPR compliance, plus framework metadata and the cross-framework satisfaction pairs that link them.
+**The canonical EU NIS2 + GDPR data model.** 49 NIS2 requirements, 7 GDPR requirements, 11 cross-framework satisfaction pairs. Drizzle schemas, framework metadata, article-level mappings. MIT-licensed. Used in production by [nisd2.eu](https://www.nisd2.eu).
 
-Used in production by [nisd2.eu](https://www.nisd2.eu).
+📖 **[Browse the full reference (REFERENCE.md)](./REFERENCE.md)** — every requirement, every pair, every article-level mapping in one document.
 
 ## Install
 
@@ -16,6 +16,7 @@ bun add @nisd2/grc-data-model
 import { supplier, asset, risk, incident } from "@nisd2/grc-data-model/schema";
 import { nis2Categories, getNis2RequirementsForCategory } from "@nisd2/grc-data-model/frameworks";
 import { nis2GdprSatisfactionPairs } from "@nisd2/grc-data-model/satisfaction-pairs";
+import { nis2GdprMapping } from "@nisd2/grc-data-model/mappings/nis2-gdpr";
 ```
 
 Drizzle config:
@@ -32,15 +33,15 @@ schema: [
 | Subpath | Contents |
 |---|---|
 | `/schema` | Drizzle tables: framework, requirement, requirement-satisfaction, supplier, asset, risk, incident |
-| `/enums` | All PG enums (incident severity, evidence type, transfer mechanism, etc.) |
+| `/enums` | 16 GRC-core PG enums (incident severity, evidence type, transfer mechanism, etc.) |
 | `/frameworks` | Categories + requirements for NIS2 (12 / 49) and GDPR (5 / 7) |
-| `/satisfaction-pairs` | 11 NIS2↔GDPR pairs |
+| `/satisfaction-pairs` | 11 NIS2↔GDPR pairs with rationale |
 | `/mappings/nis2-gdpr` | Article-level concept mapping |
 
 ## Boundary
 
-In: GRC core (suppliers, assets, risks, incidents, framework metadata, attestations).
-Out: tenant root (`company`, `user`), audit log, notifications, portals — those belong with the consumer.
+**In:** GRC core (suppliers, assets, risks, incidents, framework metadata, attestations).
+**Out:** tenant root (`company`, `user`), audit log, notifications, app-specific portals — those belong with the consumer.
 
 Cross-boundary FK constraints (e.g. `supplier.company_id → company.id`) are not declared in this package; the consumer's own migration adds them.
 
@@ -48,6 +49,14 @@ Cross-boundary FK constraints (e.g. `supplier.company_id → company.id`) are no
 
 All top-level exports follow semver. Breaking changes (renaming, removing, or restructuring exported tables, enums, frameworks data, or satisfaction pairs) bump the major version. New tables, columns, requirements, or pairs ship as a minor bump.
 
+## Contributing
+
+See [`CONTRIBUTING.md`](./CONTRIBUTING.md). Issue templates for [incorrect mappings](./.github/ISSUE_TEMPLATE/incorrect-mapping.md), [missing pairs](./.github/ISSUE_TEMPLATE/missing-pair.md), and [bugs](./.github/ISSUE_TEMPLATE/bug.md). Security policy at [`SECURITY.md`](./SECURITY.md).
+
+## Maintainer
+
+Maintained by [Kardashev Catalyst UG (haftungsbeschränkt)](https://www.nisd2.eu/impressum) for [nisd2.eu](https://www.nisd2.eu) — a free EU NIS2 compliance platform. Contact: [contact@nisd2.eu](mailto:contact@nisd2.eu).
+
 ## Licence
 
-MIT.
+MIT — see [`LICENSE`](./LICENSE).
