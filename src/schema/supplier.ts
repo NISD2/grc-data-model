@@ -26,14 +26,14 @@ export const supplier = pgTable(
     // Bilateral relationship parties
 
     /**
-     * The customer's Sorzel company. Always set for entity-side inventory
+     * The customer's consumer-app company. Always set for entity-side inventory
      * (legacy use). Always set for Direction B. Nullable in Direction A
      * when the customer is identified only by email.
      */
     customerCompanyId: uuid("customer_company_id"),
 
     /**
-     * The supplier's Sorzel company. Set when the supplier exists on the
+     * The supplier's consumer-app company. Set when the supplier exists on the
      * platform (after they sign up via Direction A invite or accept a
      * Direction B magic link). Nullable for entity-side free-text suppliers
      * who never signed up.
@@ -42,7 +42,7 @@ export const supplier = pgTable(
 
     /**
      * Customer email address — the identifier used in supplier-portal flows
-     * when the customer doesn't have a Sorzel account. Lowercased on insert.
+     * when the customer doesn't have a consumer-app account. Lowercased on insert.
      * Nullable for legacy entity-inventory rows.
      */
     customerEmail: varchar("customer_email", { length: 255 }),
@@ -50,7 +50,7 @@ export const supplier = pgTable(
     /**
      * Customer org display name. Set in supplier-portal flows where the
      * supplier knows the customer's company name but the customer doesn't
-     * have a Sorzel account. Distinct from `name` (which is the supplier-side
+     * have a consumer-app account. Distinct from `name` (which is the supplier-side
      * display name).
      */
     customerOrgName: varchar("customer_org_name", { length: 500 }),
@@ -145,7 +145,7 @@ export const supplier = pgTable(
 
     /**
      * 64-char hex bearer token. Knowing this token grants read access to the
-     * supplier's data via /supplier-access/{token} (no Sorzel account needed)
+     * supplier's data via /supplier-access/{token} (no consumer-app account needed)
      * and the right to revoke the relationship. Nullable for legacy rows.
      *
      * Column is named `unsubscribe_token` for backward compatibility with the
