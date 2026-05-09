@@ -5,3 +5,4 @@ export * from "./supplier";
 export * from "./asset";
 export * from "./risk";
 export * from "./incident";
+export * from "./asset-supplier-offering";

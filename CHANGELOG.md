@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.0 — 2026-05-09
+
+### Added
+- `assetSupplierOffering` table — bilateral asset×supplier-relationship row with service-type branch fields (saas / on_prem / pro_services / managed) for hosting region, SBOM provenance, NDA, privileged-access management, etc.
+- `assetServiceTypeEnum` (saas / on_prem / pro_services / managed).
+
+Both were previously in the consumer app despite FK-ing into `asset` and `supplier` (which already lived in this package). Relocated to keep bilateral GRC data with its peers; consumers see no behavior change.
+
 ## 0.3.0 — 2026-05-05
 
 ### Removed

@@ -96,3 +96,10 @@ export const transferMechanismEnum = pgEnum("transfer_mechanism", [
   "derogation",
   "none",
 ]);
+
+export const assetServiceTypeEnum = pgEnum("asset_service_type", [
+  "saas",
+  "on_prem",
+  "pro_services",
+  "managed",
+]);
