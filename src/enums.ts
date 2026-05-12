@@ -7,6 +7,8 @@ export const frameworkEnum = pgEnum("framework", [
   "brandschutz",
   "iso27001",
   "bsi_grundschutz",
+  "eu_ai_act",
+  "eu_cra",
 ]);
 
 export const entityTypeEnum = pgEnum("entity_type", [

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.0 - 2026-05-13
+
+### Added
+- EU AI Act framework (Regulation (EU) 2024/1689): 10 categories, 24 requirements covering literacy (Art 4), prohibited practices (Art 5), inventory and classification (Art 6, 25, 26), risk management (Art 9), fundamental rights impact assessment (Art 27), human oversight (Art 14), transparency (Art 50), incident reporting (Art 73), technical documentation (Annex IV), GPAI obligations (Art 51-55).
+- EU Cyber Resilience Act framework (Regulation (EU) 2024/2847): 10 categories, 20 requirements covering manufacturer obligations (Art 13), essential cybersecurity requirements (Annex I Part I), vulnerability handling (Annex I Part II), active-exploitation reporting (Art 14), conformity assessment (Art 24, 27), technical documentation (Annex VII), support period (Art 13(8)), SBOM, importer and distributor duties (Art 18, 19), open-source steward role (Art 24).
+- Cross-framework satisfaction pairs: AI Act and NIS 2 (7 pairs), AI Act and GDPR (2 pairs), CRA and NIS 2 (6 pairs), CRA and AI Act (2 pairs).
+- Two new framework enum values: `eu_ai_act`, `eu_cra`.
+- Generic `SatisfactionPair` tuple now supports any two-framework pairing. Combined export `allSatisfactionPairs`.
+- Integrity tests cover both new frameworks and all four new satisfaction-pair sets (11 tests total).
+
 ## 0.4.0 — 2026-05-09
 
 ### Added

@@ -4,31 +4,73 @@ import {
   getNis2RequirementsForCategory,
   gdprCategories,
   getGdprRequirementsForCategory,
+  euAiActCategories,
+  getEuAiActRequirementsForCategory,
+  euCraCategories,
+  getEuCraRequirementsForCategory,
 } from "../src/frameworks";
-import { nis2GdprSatisfactionPairs } from "../src/satisfaction-pairs";
+import {
+  nis2GdprSatisfactionPairs,
+  aiActNis2SatisfactionPairs,
+  aiActGdprSatisfactionPairs,
+  craNis2SatisfactionPairs,
+  craAiActSatisfactionPairs,
+  allSatisfactionPairs,
+} from "../src/satisfaction-pairs";
 
-const nis2Codes = new Set<string>();
-for (const c of nis2Categories) for (const r of getNis2RequirementsForCategory(c.slug)) nis2Codes.add(r.code);
+function collectCodes(
+  categories: { slug: string }[],
+  getReqs: (slug: string) => { code: string }[],
+): Set<string> {
+  const codes = new Set<string>();
+  for (const c of categories) for (const r of getReqs(c.slug)) codes.add(r.code);
+  return codes;
+}
 
-const gdprCodes = new Set<string>();
-for (const c of gdprCategories) for (const r of getGdprRequirementsForCategory(c.slug)) gdprCodes.add(r.code);
+const nis2Codes = collectCodes(nis2Categories, getNis2RequirementsForCategory);
+const gdprCodes = collectCodes(gdprCategories, getGdprRequirementsForCategory);
+const aiActCodes = collectCodes(euAiActCategories, getEuAiActRequirementsForCategory);
+const craCodes = collectCodes(euCraCategories, getEuCraRequirementsForCategory);
 
 describe("satisfaction pairs", () => {
-  test("every NIS2 code references a real requirement", () => {
-    for (const [a] of nis2GdprSatisfactionPairs) {
+  test("nis2GdprSatisfactionPairs reference real codes", () => {
+    for (const [a, b] of nis2GdprSatisfactionPairs) {
       expect(nis2Codes.has(a), `unknown NIS2 code: ${a}`).toBe(true);
-    }
-  });
-
-  test("every GDPR code references a real requirement", () => {
-    for (const [, b] of nis2GdprSatisfactionPairs) {
       expect(gdprCodes.has(b), `unknown GDPR code: ${b}`).toBe(true);
     }
   });
 
+  test("aiActNis2SatisfactionPairs reference real codes", () => {
+    for (const [a, b] of aiActNis2SatisfactionPairs) {
+      expect(aiActCodes.has(a), `unknown AI Act code: ${a}`).toBe(true);
+      expect(nis2Codes.has(b), `unknown NIS2 code: ${b}`).toBe(true);
+    }
+  });
+
+  test("aiActGdprSatisfactionPairs reference real codes", () => {
+    for (const [a, b] of aiActGdprSatisfactionPairs) {
+      expect(aiActCodes.has(a), `unknown AI Act code: ${a}`).toBe(true);
+      expect(gdprCodes.has(b), `unknown GDPR code: ${b}`).toBe(true);
+    }
+  });
+
+  test("craNis2SatisfactionPairs reference real codes", () => {
+    for (const [a, b] of craNis2SatisfactionPairs) {
+      expect(craCodes.has(a), `unknown CRA code: ${a}`).toBe(true);
+      expect(nis2Codes.has(b), `unknown NIS2 code: ${b}`).toBe(true);
+    }
+  });
+
+  test("craAiActSatisfactionPairs reference real codes", () => {
+    for (const [a, b] of craAiActSatisfactionPairs) {
+      expect(craCodes.has(a), `unknown CRA code: ${a}`).toBe(true);
+      expect(aiActCodes.has(b), `unknown AI Act code: ${b}`).toBe(true);
+    }
+  });
+
   test("rationale is non-empty for every pair", () => {
-    for (const [a, b, rationale] of nis2GdprSatisfactionPairs) {
-      expect(rationale.trim().length, `empty rationale for ${a} ↔ ${b}`).toBeGreaterThan(0);
+    for (const [a, b, rationale] of allSatisfactionPairs) {
+      expect(rationale.trim().length, `empty rationale for ${a} <-> ${b}`).toBeGreaterThan(0);
     }
   });
 });
@@ -54,10 +96,30 @@ describe("framework data", () => {
     }
   });
 
+  test("AI Act has no duplicate requirement codes", () => {
+    const seen = new Set<string>();
+    for (const c of euAiActCategories) {
+      for (const r of getEuAiActRequirementsForCategory(c.slug)) {
+        expect(seen.has(r.code), `duplicate AI Act code: ${r.code}`).toBe(false);
+        seen.add(r.code);
+      }
+    }
+  });
+
+  test("CRA has no duplicate requirement codes", () => {
+    const seen = new Set<string>();
+    for (const c of euCraCategories) {
+      for (const r of getEuCraRequirementsForCategory(c.slug)) {
+        expect(seen.has(r.code), `duplicate CRA code: ${r.code}`).toBe(false);
+        seen.add(r.code);
+      }
+    }
+  });
+
   test("category slugs are unique within each framework", () => {
-    const nis2Slugs = nis2Categories.map((c) => c.slug);
-    expect(new Set(nis2Slugs).size).toBe(nis2Slugs.length);
-    const gdprSlugs = gdprCategories.map((c) => c.slug);
-    expect(new Set(gdprSlugs).size).toBe(gdprSlugs.length);
+    for (const cats of [nis2Categories, gdprCategories, euAiActCategories, euCraCategories]) {
+      const slugs = cats.map((c) => c.slug);
+      expect(new Set(slugs).size).toBe(slugs.length);
+    }
   });
 });
