@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.6.0 - 2026-05-13
+
+### Added
+- Generic seeder at `@nisd2/grc-data-model/seed`. `seedFramework(db, spec)` upserts a framework, its categories, and its requirements into a Postgres database; `linkSatisfactionPairs(db, pairs)` inserts cross-framework satisfaction pairs. Both are idempotent and scoped strictly to the rows they own.
+- `FrameworkCode` type derived from the `frameworkEnum` pg enum values, so callers cannot pass an unknown code.
+- `SeedDb` type alias for any Drizzle PgDatabase instance.
+
+Consumer apps no longer need to hand-roll the framework-row plumbing. Example usage and full surface documented in `src/seed.ts`. The previous app-side `seed-aiact-cra.ts` script (~190 lines) now reads as ~70 lines of thin caller.
+
 ## 0.5.0 - 2026-05-13
 
 ### Added

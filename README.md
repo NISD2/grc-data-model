@@ -28,6 +28,34 @@ schema: [
 ],
 ```
 
+Seed your own database with the four frameworks (NIS 2, GDPR, EU AI Act, CRA):
+
+```ts
+import { drizzle } from "drizzle-orm/node-postgres";
+import {
+  euAiActCategories,
+  getEuAiActRequirementsForCategory,
+} from "@nisd2/grc-data-model/frameworks";
+import { aiActNis2SatisfactionPairs } from "@nisd2/grc-data-model/satisfaction-pairs";
+import { seedFramework, linkSatisfactionPairs } from "@nisd2/grc-data-model/seed";
+
+const db = drizzle(pool);
+
+await seedFramework(db, {
+  code: "eu_ai_act",
+  version: "2024/1689",
+  effectiveDate: "2024-08-01",
+  codePrefix: "AI-",
+  sidebarLabel: "aiact",
+  categories: euAiActCategories,
+  getRequirements: getEuAiActRequirementsForCategory,
+});
+
+await linkSatisfactionPairs(db, aiActNis2SatisfactionPairs);
+```
+
+Each call is idempotent and scoped to the framework code; existing rows for other frameworks and any operational data are untouched.
+
 ## Subpaths
 
 | Subpath | Contents |
@@ -35,8 +63,9 @@ schema: [
 | `/schema` | Drizzle tables: framework, requirement, requirement-satisfaction, supplier, asset, risk, incident |
 | `/enums` | 16 GRC-core PG enums (incident severity, evidence type, transfer mechanism, etc.) |
 | `/frameworks` | Categories + requirements for NIS2 (12 / 49) and GDPR (5 / 7) |
-| `/satisfaction-pairs` | 11 NIS2↔GDPR pairs with rationale |
+| `/satisfaction-pairs` | NIS2 ↔ GDPR, AI Act ↔ NIS2, AI Act ↔ GDPR, CRA ↔ NIS2, CRA ↔ AI Act |
 | `/mappings/nis2-gdpr` | Article-level concept mapping |
+| `/seed` | `seedFramework(db, spec)` and `linkSatisfactionPairs(db, pairs)` to populate a Postgres database with the framework data |
 
 ## Boundary
 

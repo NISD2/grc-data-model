@@ -1,6 +1,6 @@
 {
   "name": "@nisd2/grc-data-model",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Relational data model for EU GRC: RoPA, DPA, TOMs, supplier-core, asset-core, risk, incident schemas, plus NIS2↔GDPR mappings. Zod source of truth, JSON Schema export.",
   "license": "MIT",
   "homepage": "https://github.com/NISD2/grc-data-model",
@@ -50,6 +50,10 @@
     "./mappings/nis2-gdpr": {
       "types": "./dist/mappings/nis2-gdpr.d.ts",
       "import": "./dist/mappings/nis2-gdpr.js"
+    },
+    "./seed": {
+      "types": "./dist/seed.d.ts",
+      "import": "./dist/seed.js"
     }
   },
   "files": [

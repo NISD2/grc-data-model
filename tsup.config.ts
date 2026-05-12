@@ -8,6 +8,7 @@ export default defineConfig({
     "src/frameworks/index.ts",
     "src/satisfaction-pairs.ts",
     "src/mappings/nis2-gdpr.ts",
+    "src/seed.ts",
   ],
   format: ["esm"],
   dts: true,
