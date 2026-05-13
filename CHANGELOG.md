@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.9.0 - 2026-05-13
+
+### Changed
+- `seedFramework` is now upsert-only. It no longer deletes existing categories or requirements before re-seeding; it matches by natural key (framework code, category slug, requirement code) and updates metadata in place. Foreign-key references from operational tables (sign-offs, assignments, audit history) are preserved across re-runs.
+- Re-seeding a framework is now safe in any environment, including production. Earlier callers gated the seed with `NODE_ENV !== "production"` because the destructive path could cascade-delete user data; that guard is no longer needed.
+
+### Why this matters
+- A framework rewrite (renamed slug, new category, restructured requirement codes) used to be a destructive operation that could only run on a dev DB. Now the same script evolves prod metadata without touching live data.
+- Orphan handling is deliberate: requirements that disappear from the spec are NOT auto-deleted. Removing a requirement remains a manual curation step that should run only after confirming no live sign-offs reference it.
+
 ## 0.8.0 - 2026-05-08
 
 ### Added

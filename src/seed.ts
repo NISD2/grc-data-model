@@ -34,14 +34,13 @@
  *
  *   await linkSatisfactionPairs(db, aiActNis2SatisfactionPairs);
  */
-import { eq, inArray, and, type ExtractTablesWithRelations } from "drizzle-orm";
+import { eq, and, type ExtractTablesWithRelations } from "drizzle-orm";
 import type { PgDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core";
 import { frameworkEnum } from "./enums";
 import {
   complianceFramework,
   requirementCategory,
   requirement,
-  requirementPrerequisite,
   requirementSatisfaction,
 } from "./schema";
 import type { FrameworkCategory, FrameworkRequirement } from "./frameworks/types";
@@ -83,50 +82,27 @@ export interface SeedResult {
 }
 
 /**
- * Seed a single framework (idempotent).
+ * Seed a single framework (idempotent, upsert-only).
  *
- * Removes existing rows for the given framework code before re-inserting.
- * Other frameworks and unrelated tables are not touched.
+ * Matches existing rows by natural key and updates their metadata in place.
+ * Never deletes requirements or categories, so FK references from operational
+ * tables (company_requirement_status, requirement_assignment, sign_off_history,
+ * etc.) stay intact. Safe to run in production any number of times.
+ *
+ * Natural keys:
+ *   - complianceFramework.code (globally unique)
+ *   - requirementCategory: (frameworkId, slug) — looked up, not enforced by DB
+ *   - requirement.code (globally unique)
+ *
+ * Orphan handling: if a previously-seeded category or requirement is no longer
+ * in the spec, it is LEFT ALONE. Removing framework content is a deliberate
+ * curation step, not a seeding side-effect; do it through a separate migration
+ * after confirming no live data references the row.
  */
 export async function seedFramework(
   db: SeedDb,
   spec: FrameworkSeedSpec,
 ): Promise<SeedResult> {
-  const existing = await db
-    .select({ id: complianceFramework.id })
-    .from(complianceFramework)
-    .where(eq(complianceFramework.code, spec.code))
-    .limit(1);
-
-  if (existing.length > 0 && existing[0]) {
-    const fwId = existing[0].id;
-    const cats = await db
-      .select({ id: requirementCategory.id })
-      .from(requirementCategory)
-      .where(eq(requirementCategory.frameworkId, fwId));
-    const catIds = cats.map((c) => c.id);
-
-    if (catIds.length > 0) {
-      const reqs = await db
-        .select({ id: requirement.id })
-        .from(requirement)
-        .where(inArray(requirement.categoryId, catIds));
-      const reqIds = reqs.map((r) => r.id);
-
-      if (reqIds.length > 0) {
-        await db
-          .delete(requirementPrerequisite)
-          .where(inArray(requirementPrerequisite.requirementId, reqIds));
-        await db
-          .delete(requirement)
-          .where(inArray(requirement.id, reqIds));
-      }
-      await db
-        .delete(requirementCategory)
-        .where(eq(requirementCategory.frameworkId, fwId));
-    }
-  }
-
   const [fw] = await db
     .insert(complianceFramework)
     .values({
@@ -143,41 +119,68 @@ export async function seedFramework(
         version: spec.version,
         effectiveDate: spec.effectiveDate,
         isActive: true,
+        codePrefix: spec.codePrefix,
+        sidebarLabel: spec.sidebarLabel,
       },
     })
     .returning({ id: complianceFramework.id });
 
   if (!fw) {
-    throw new Error(`Failed to insert framework ${spec.code}`);
+    throw new Error(`Failed to upsert framework ${spec.code}`);
   }
 
   let categoryCount = 0;
   let requirementCount = 0;
 
   for (const cat of spec.categories) {
-    const [row] = await db
-      .insert(requirementCategory)
-      .values({
-        frameworkId: fw.id,
-        code: cat.code,
-        slug: cat.slug,
-        nis2Url: cat.nis2Url,
-        bsigUrl: cat.bsigUrl || null,
-        sortOrder: cat.sortOrder,
-        estimatedMinutes: cat.estimatedMinutes,
-        relevantRoles: cat.relevantRoles ?? null,
-        grundschutzModule: cat.grundschutzModule ?? null,
-      })
-      .returning({ id: requirementCategory.id });
-    if (!row) continue;
+    const existingCat = await db
+      .select({ id: requirementCategory.id })
+      .from(requirementCategory)
+      .where(
+        and(
+          eq(requirementCategory.frameworkId, fw.id),
+          eq(requirementCategory.slug, cat.slug),
+        ),
+      )
+      .limit(1);
+
+    const catFields = {
+      frameworkId: fw.id,
+      code: cat.code,
+      slug: cat.slug,
+      nis2Url: cat.nis2Url,
+      bsigUrl: cat.bsigUrl || null,
+      sortOrder: cat.sortOrder,
+      estimatedMinutes: cat.estimatedMinutes,
+      relevantRoles: cat.relevantRoles ?? null,
+      grundschutzModule: cat.grundschutzModule ?? null,
+    };
+
+    let categoryId: string;
+    const existing = existingCat[0];
+    if (existing) {
+      await db
+        .update(requirementCategory)
+        .set(catFields)
+        .where(eq(requirementCategory.id, existing.id));
+      categoryId = existing.id;
+    } else {
+      const [inserted] = await db
+        .insert(requirementCategory)
+        .values(catFields)
+        .returning({ id: requirementCategory.id });
+      if (!inserted) continue;
+      categoryId = inserted.id;
+    }
     categoryCount++;
 
     const reqs = spec.getRequirements(cat.slug);
     for (let i = 0; i < reqs.length; i++) {
       const r = reqs[i];
       if (!r) continue;
-      await db.insert(requirement).values({
-        categoryId: row.id,
+
+      const reqFields = {
+        categoryId,
         code: r.code,
         evidenceType: r.evidenceType,
         frequency: r.frequency,
@@ -188,7 +191,15 @@ export async function seedFramework(
         moduleRef: r.moduleRef || null,
         requiredSignOffRole: r.requiredSignOffRole || null,
         sortOrder: i,
-      });
+      };
+
+      await db
+        .insert(requirement)
+        .values(reqFields)
+        .onConflictDoUpdate({
+          target: requirement.code,
+          set: reqFields,
+        });
       requirementCount++;
     }
   }
