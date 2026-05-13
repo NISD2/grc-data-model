@@ -198,10 +198,10 @@ BSI IT-Grundschutz module: `DER.3.1`. Estimated effort: 40 minutes.
 | `2.1` | `G-ROP.1` | Asset classification methodology defines the systems recorded in the Art. 30 register. |
 | `2.2` | `G-ROP.1` | Same asset inventory; NIS2 asset-classification ↔ GDPR Art. 30 records of processing. |
 | `2.3` | `G-ROP.1` | Asset criticality under NIS2 informs Art. 30/35 high-risk processing. |
-| `3.1` | `G-BRC.1` | Incident response procedure covers the detection-to-notification flow Art. 33 requires. |
+| `3.1` | `G-BRC.1` | Same incident response procedure satisfies the NIS2 detection-to-notification flow and the GDPR Art. 33 breach response. |
 | `3.2` | `G-BRC.2` | Same incident rows; NIS2 detection/logging ↔ Art. 33(5) breach documentation. |
 | `3.3` | `G-BRC.1` | NIS2 24h/72h cascade and Art. 33's 72h breach notification share the same clock. |
-| `3.5` | `G-BRC.2` | Final incident report under NIS2 §35 documents the root-cause evidence Art. 33(5) requires. |
+| `3.5` | `G-BRC.2` | Same final incident report: NIS2 §35 and Art. 33(5) share the root-cause evidence and lessons-learned write-up. |
 | `2.4` | `G-TOM.1` | CEO sign-off on the Art. 21(2) risk treatment plan attests the TOMs posture Art. 32 requires. |
 
 ## Article-Level Mapping

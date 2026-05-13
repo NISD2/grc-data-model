@@ -81,6 +81,27 @@ describe("satisfaction pairs", () => {
       expect(rationale.trim().length, `empty rationale for ${a} <-> ${b}`).toBeGreaterThan(0);
     }
   });
+
+  test("equivalence kind, when set, is one of the allowed values", () => {
+    for (const [a, b, , kind] of allSatisfactionPairs) {
+      if (kind === undefined) continue;
+      expect(["equivalent", "overlapping"], `bad kind for ${a} <-> ${b}: ${kind}`).toContain(kind);
+    }
+  });
+
+  test("equivalent pairs only chain through shared underlying artefacts", () => {
+    const equivalentRationaleHints = ["same ", "reuses", "share", "shared", "Same ", "same underlying"];
+    for (const [a, b, rationale, kind] of allSatisfactionPairs) {
+      if (kind !== "equivalent") continue;
+      const matchesHint = equivalentRationaleHints.some((h) =>
+        rationale.toLowerCase().includes(h.toLowerCase()),
+      );
+      expect(
+        matchesHint,
+        `pair ${a} <-> ${b} is marked equivalent but rationale lacks shared-artefact wording: ${rationale}`,
+      ).toBe(true);
+    }
+  });
 });
 
 describe("framework data", () => {

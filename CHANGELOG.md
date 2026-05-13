@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.8.0 - 2026-05-08
+
+### Added
+- `equivalenceKindEnum` pg enum with values `equivalent` and `overlapping`.
+- `equivalenceKind` column on `requirement_satisfaction` (default `overlapping`, not null, indexed). Non-destructive migration: existing rows keep the safe default.
+- Optional 4th element on the `SatisfactionPair` tuple: `kind?: "equivalent" | "overlapping"`. Pairs that name the same underlying artefact (same supplier register, same incident row, same methodology, same final report) are tagged `equivalent`. All others stay `overlapping`.
+- 16 pairs across the four binary intersections tagged `equivalent` based on rationale wording. The rest of the 38-pair set remains `overlapping`.
+- `linkSatisfactionPairs` now writes the 4th tuple element to the new column and updates existing rows on re-seed, so the package stays the single source of truth for both the rationale and the equivalence classification.
+- Integrity test asserts every `equivalent` pair's rationale carries shared-artefact wording (same, share, shared, reuse, same underlying), keeping the data set honest.
+
+### Why this matters
+- Two failure modes the old single-hop design could not handle: (1) a chain X-eq-Y-eq-Z where signing X should credit Z because all three reference one artefact; (2) a chain X-overlap-Y-eq-Z where signing X must NOT credit Z because the X-Y overlap is only partial. The `equivalenceKind` column gives consumers the metadata they need to BFS the graph safely.
+- Direct credit is unchanged: signing any X still credits every direct neighbour regardless of kind, because the rationale on every pair justifies a one-hop attestation. The change only affects transitive composition.
+
 ## 0.7.0 - 2026-05-13
 
 ### Added

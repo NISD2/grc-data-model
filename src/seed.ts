@@ -214,7 +214,9 @@ export async function linkSatisfactionPairs(
   let linkedCount = 0;
   const skipped: string[] = [];
 
-  for (const [aCode, bCode, rationale] of pairs) {
+  for (const [aCode, bCode, rationale, kind] of pairs) {
+    const equivalenceKind = kind ?? "overlapping";
+
     const aRows = await db
       .select({ id: requirement.id })
       .from(requirement)
@@ -245,7 +247,12 @@ export async function linkSatisfactionPairs(
       )
       .limit(1);
 
-    if (already.length > 0) {
+    const existing = already[0];
+    if (existing) {
+      await db
+        .update(requirementSatisfaction)
+        .set({ rationale, equivalenceKind })
+        .where(eq(requirementSatisfaction.id, existing.id));
       linkedCount++;
       continue;
     }
@@ -254,6 +261,7 @@ export async function linkSatisfactionPairs(
       requirementAId: a.id,
       requirementBId: b.id,
       rationale,
+      equivalenceKind,
     });
     linkedCount++;
   }

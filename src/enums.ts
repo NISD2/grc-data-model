@@ -105,3 +105,8 @@ export const assetServiceTypeEnum = pgEnum("asset_service_type", [
   "pro_services",
   "managed",
 ]);
+
+export const equivalenceKindEnum = pgEnum("equivalence_kind", [
+  "equivalent",
+  "overlapping",
+]);
