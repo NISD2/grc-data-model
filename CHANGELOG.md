@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.7.0 - 2026-05-13
+
+### Added
+- 10 new cross-framework satisfaction pairs that fill the 4-way overlap landscape:
+  - AI Act <-> GDPR: AI-RSK.1 <-> G-TOM.1, AI-DOC.1 <-> G-ROP.1, AI-INC.1 <-> G-BRC.1 (3 new, total 5)
+  - CRA <-> NIS 2: CRA-INC.3 <-> 3.5, CRA-MFG.1 <-> 2.1, CRA-MFG.2 <-> 2.4 (3 new, total 9)
+  - CRA <-> AI Act: CRA-INC.1 <-> AI-INC.1, CRA-DOC.1 <-> AI-DOC.2 (2 new, total 4)
+  - CRA <-> GDPR: CRA-ESS.1 <-> G-TOM.1, CRA-VLN.1 <-> G-BRC.1 (2 new, the first GDPR <-> CRA pairs)
+- New `craGdprSatisfactionPairs` const array.
+- Integrity tests cover the new pair set (12 tests, all pass).
+
+Direct propagation can now traverse single-step links across all four frameworks. Sign once on a NIS 2 risk methodology requirement and the matching GDPR Art. 32, AI Act Art. 9, and CRA Art. 13 obligations all complete in one go.
+
 ## 0.6.0 - 2026-05-13
 
 ### Added

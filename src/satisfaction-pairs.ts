@@ -34,6 +34,9 @@ export const aiActNis2SatisfactionPairs: SatisfactionPair[] = [
 export const aiActGdprSatisfactionPairs: SatisfactionPair[] = [
   ["AI-FRI.1", "G-TOM.1", "Fundamental Rights Impact Assessment overlaps with the GDPR Art. 35 DPIA when the AI system processes personal data."],
   ["AI-TRA.1", "G-ROP.1", "AI Act Art. 50 transparency to end users overlaps with GDPR Art. 13/14 information duties when the AI processes personal data."],
+  ["AI-RSK.1", "G-TOM.1", "AI risk management framework under Art. 9 overlaps with the technical and organisational measures GDPR Art. 32 requires."],
+  ["AI-DOC.1", "G-ROP.1", "Annex IV technical documentation overlaps with the GDPR Art. 30 records of processing when the AI system processes personal data."],
+  ["AI-INC.1", "G-BRC.1", "AI Act Art. 73 incident response procedure overlaps with the GDPR Art. 33 breach response procedure when the incident involves personal data."],
 ];
 
 export const craNis2SatisfactionPairs: SatisfactionPair[] = [
@@ -41,13 +44,23 @@ export const craNis2SatisfactionPairs: SatisfactionPair[] = [
   ["CRA-VLN.3", "6.4", "Security updates without delay align with the NIS2 patch management cadence."],
   ["CRA-INC.1", "3.1", "Active-exploitation reporting reuses the same incident response procedure NIS2 expects."],
   ["CRA-INC.2", "3.3", "Same record progresses through both clocks: CRA 24h/72h to ENISA + CSIRT and NIS2 24h/72h to CSIRT."],
+  ["CRA-INC.3", "3.5", "CRA 14-day final report and NIS2 final incident report share the same root-cause and mitigation evidence."],
   ["CRA-IMP.1", "5.1", "Importer due diligence on manufacturers overlaps with the NIS2 supplier security policy."],
   ["CRA-IMP.2", "5.2", "Distributor checks overlap with NIS2 supplier contractual security clauses."],
+  ["CRA-MFG.1", "2.1", "Per-product cybersecurity risk assessment reuses the methodology defined for NIS2 risk management (CIR 2.1)."],
+  ["CRA-MFG.2", "2.4", "Management body sign-off on CRA risk assessment overlaps with the CEO sign-off NIS2 risk treatment plan requires."],
 ];
 
 export const craAiActSatisfactionPairs: SatisfactionPair[] = [
   ["CRA-ESS.1", "AI-RSK.1", "Essential cybersecurity requirements (Annex I) overlap with AI risk management for high-risk AI systems with embedded digital elements; Art. 12 CRA presumption-of-conformity links the two."],
   ["CRA-DOC.1", "AI-DOC.1", "Annex VII technical documentation overlaps with AI Act Annex IV for products that are both PDE and high-risk AI."],
+  ["CRA-INC.1", "AI-INC.1", "Active-exploitation reporting overlaps with the AI Act incident response procedure when the AI system is also a product with digital elements."],
+  ["CRA-DOC.1", "AI-DOC.2", "Annex VII technical documentation includes the logging and traceability evidence Art. 12 AI Act requires."],
+];
+
+export const craGdprSatisfactionPairs: SatisfactionPair[] = [
+  ["CRA-ESS.1", "G-TOM.1", "Essential cybersecurity requirements (Annex I) overlap with the technical and organisational measures GDPR Art. 32 requires when the product processes personal data."],
+  ["CRA-VLN.1", "G-BRC.1", "Vulnerability handling procedures feed the GDPR Art. 33 breach response when a vulnerability leads to a personal-data breach."],
 ];
 
 export const allSatisfactionPairs: SatisfactionPair[] = [
@@ -56,4 +69,5 @@ export const allSatisfactionPairs: SatisfactionPair[] = [
   ...aiActGdprSatisfactionPairs,
   ...craNis2SatisfactionPairs,
   ...craAiActSatisfactionPairs,
+  ...craGdprSatisfactionPairs,
 ];

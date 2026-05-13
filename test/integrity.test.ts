@@ -15,6 +15,7 @@ import {
   aiActGdprSatisfactionPairs,
   craNis2SatisfactionPairs,
   craAiActSatisfactionPairs,
+  craGdprSatisfactionPairs,
   allSatisfactionPairs,
 } from "../src/satisfaction-pairs";
 
@@ -65,6 +66,13 @@ describe("satisfaction pairs", () => {
     for (const [a, b] of craAiActSatisfactionPairs) {
       expect(craCodes.has(a), `unknown CRA code: ${a}`).toBe(true);
       expect(aiActCodes.has(b), `unknown AI Act code: ${b}`).toBe(true);
+    }
+  });
+
+  test("craGdprSatisfactionPairs reference real codes", () => {
+    for (const [a, b] of craGdprSatisfactionPairs) {
+      expect(craCodes.has(a), `unknown CRA code: ${a}`).toBe(true);
+      expect(gdprCodes.has(b), `unknown GDPR code: ${b}`).toBe(true);
     }
   });
 
