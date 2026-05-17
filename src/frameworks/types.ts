@@ -40,6 +40,7 @@ export interface FrameworkRequirement {
   importance: Importance;
   legalRef: string;
   directiveArticle: string | null;
+  cirReference: string | null;
   moduleRef: string | null;
   requiredSignOffRole: string | null;
 }
@@ -50,6 +51,7 @@ export interface RequirementOptions {
   frequency?: Frequency;
   legalRef?: string;
   directiveArticle?: string;
+  cirReference?: string;
   moduleRef?: string;
   requiredSignOffRole?: string;
 }
@@ -71,6 +73,7 @@ export function makeRequirementFactory(idPrefix: string) {
       importance: opts.importance ?? "mandatory",
       legalRef: opts.legalRef ?? "",
       directiveArticle: opts.directiveArticle ?? null,
+      cirReference: opts.cirReference ?? null,
       moduleRef: opts.moduleRef ?? null,
       requiredSignOffRole: opts.requiredSignOffRole ?? null,
     };
