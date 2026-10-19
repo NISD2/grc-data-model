@@ -28,23 +28,29 @@
  *     effectiveDate: "2024-08-01",
  *     codePrefix: "AI-",
  *     sidebarLabel: "aiact",
+ *     // Seed the reference data, keep it out of the UI. Only NIS 2 is active.
+ *     isActive: false,
  *     categories: euAiActCategories,
  *     getRequirements: getEuAiActRequirementsForCategory,
  *   });
  *
  *   await linkSatisfactionPairs(db, aiActNis2SatisfactionPairs);
  */
-import { eq, and, type ExtractTablesWithRelations } from "drizzle-orm";
+import { and, type ExtractTablesWithRelations, eq } from "drizzle-orm";
 import type { PgDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core";
-import { frameworkEnum } from "./enums";
+import type { frameworkEnum } from "./enums";
+import {
+  czechRefColumns,
+  type FrameworkCategory,
+  type FrameworkRequirement,
+} from "./frameworks/types";
+import type { SatisfactionPair } from "./satisfaction-pairs";
 import {
   complianceFramework,
-  requirementCategory,
   requirement,
+  requirementCategory,
   requirementSatisfaction,
 } from "./schema";
-import type { FrameworkCategory, FrameworkRequirement } from "./frameworks/types";
-import type { SatisfactionPair } from "./satisfaction-pairs";
 
 export type FrameworkCode = (typeof frameworkEnum.enumValues)[number];
 
@@ -55,11 +61,8 @@ export type FrameworkCode = (typeof frameworkEnum.enumValues)[number];
  * without a cast. The seeder only touches the four tables this package owns;
  * the schema parameter is forwarded for variance reasons only.
  */
-export type SeedDb<TSchema extends Record<string, unknown> = Record<string, unknown>> = PgDatabase<
-  PgQueryResultHKT,
-  TSchema,
-  ExtractTablesWithRelations<TSchema>
->;
+export type SeedDb<TSchema extends Record<string, unknown> = Record<string, unknown>> =
+  PgDatabase<PgQueryResultHKT, TSchema, ExtractTablesWithRelations<TSchema>>;
 
 export interface FrameworkSeedSpec {
   /** Must match a value in the `framework` pg enum. */
@@ -72,6 +75,16 @@ export interface FrameworkSeedSpec {
   codePrefix: string;
   /** Sidebar label / i18n key, e.g. "aiact". */
   sidebarLabel: string;
+  /**
+   * Drives every framework-scoped surface: the sidebar and /compliance pages
+   * (`getAllActiveCategories`) and what a new signup is provisioned
+   * (`createAssessmentsForFrameworks`). Declared per framework rather than
+   * hardcoded here, because the upsert below re-asserts it on every rerun: a
+   * hardcoded `true` silently reactivated a framework someone had switched off.
+   * Reference data for an inactive framework is still seeded, so satisfaction
+   * pairs keep resolving and existing tenants keep their rows.
+   */
+  isActive: boolean;
   categories: FrameworkCategory[];
   getRequirements: (slug: string) => FrameworkRequirement[];
 }
@@ -110,7 +123,7 @@ export async function seedFramework<TSchema extends Record<string, unknown>>(
       code: spec.code,
       version: spec.version,
       effectiveDate: spec.effectiveDate,
-      isActive: true,
+      isActive: spec.isActive,
       codePrefix: spec.codePrefix,
       sidebarLabel: spec.sidebarLabel,
     })
@@ -119,7 +132,7 @@ export async function seedFramework<TSchema extends Record<string, unknown>>(
       set: {
         version: spec.version,
         effectiveDate: spec.effectiveDate,
-        isActive: true,
+        isActive: spec.isActive,
         codePrefix: spec.codePrefix,
         sidebarLabel: spec.sidebarLabel,
       },
@@ -188,6 +201,7 @@ export async function seedFramework<TSchema extends Record<string, unknown>>(
         priority: r.priority,
         importance: r.importance,
         legalRef: r.legalRef || null,
+        ...czechRefColumns(r.czechRef),
         frameworkRef: r.frameworkRef || null,
         cirReference: r.cirReference || null,
         moduleRef: r.moduleRef || null,
@@ -195,13 +209,10 @@ export async function seedFramework<TSchema extends Record<string, unknown>>(
         sortOrder: i,
       };
 
-      await db
-        .insert(requirement)
-        .values(reqFields)
-        .onConflictDoUpdate({
-          target: requirement.code,
-          set: reqFields,
-        });
+      await db.insert(requirement).values(reqFields).onConflictDoUpdate({
+        target: requirement.code,
+        set: reqFields,
+      });
       requirementCount++;
     }
   }

@@ -1,6 +1,6 @@
 # @nisd2/grc-data-model
 
-**The canonical EU cybersecurity + AI compliance data model.** 217 requirements across NIS 2, GDPR, EU AI Act, CRA, and ISO 27001:2022. 111 cross-framework satisfaction pairs. Drizzle schemas, framework metadata, article-level mappings. MIT-licensed. Used in production by [nisd2.eu](https://www.nisd2.eu).
+**The canonical EU cybersecurity + AI compliance data model.** 219 requirements across NIS 2, GDPR, EU AI Act, CRA, and ISO 27001:2022. Cross-framework links, each marked as the same record in both frameworks or a partial overlap (counts in [REFERENCE.md](./REFERENCE.md#cross-framework-satisfaction-pairs)). Drizzle schemas, framework metadata, article-level mappings. Openly licensed: content CC BY 4.0 (AI training and retrieval expressly permitted), code MIT; ISO clause and control titles and descriptions are excluded (see LICENSE, section 3). Used in production by [nisd2.eu](https://www.nisd2.eu).
 
 **[Browse the full reference (REFERENCE.md)](./REFERENCE.md)** — every requirement, every pair, every article-level mapping in one document.
 
@@ -62,8 +62,8 @@ Each call is idempotent and scoped to the framework code; existing rows for othe
 |---|---|
 | `/schema` | Drizzle tables: framework, requirement, requirement-satisfaction, supplier, asset, risk, incident |
 | `/enums` | 16 GRC-core PG enums (incident severity, evidence type, transfer mechanism, etc.) |
-| `/frameworks` | Categories + requirements for NIS 2 (12 / 49), GDPR (5 / 7), EU AI Act (5 / 24), CRA (4 / 21), ISO 27001:2022 (5 / 116) |
-| `/satisfaction-pairs` | NIS 2 ↔ GDPR (11), AI Act ↔ NIS 2 (7), AI Act ↔ GDPR (5), CRA ↔ NIS 2 (9), CRA ↔ AI Act (4), CRA ↔ GDPR (2), ISO 27001 ↔ NIS 2 (73) |
+| `/frameworks` | Categories + requirements for NIS 2, GDPR, EU AI Act, CRA and ISO 27001:2022, listed once in `FRAMEWORK_DATA`; counts in [REFERENCE.md](./REFERENCE.md#coverage-summary) |
+| `/satisfaction-pairs` | Links between requirements of two frameworks (NIS 2, GDPR, AI Act, CRA, ISO 27001), each with its kind and rationale; counts in [REFERENCE.md](./REFERENCE.md#cross-framework-satisfaction-pairs) |
 | `/mappings/nis2-gdpr` | Article-level concept mapping |
 | `/seed` | `seedFramework(db, spec)` and `linkSatisfactionPairs(db, pairs)` to populate a Postgres database with the framework data |
 
@@ -84,8 +84,14 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md). Issue templates for [incorrect mappi
 
 ## Maintainer
 
-Maintained by [Kardashev Catalyst UG (haftungsbeschränkt)](https://www.nisd2.eu/impressum) for [nisd2.eu](https://www.nisd2.eu) — a free EU NIS2 compliance platform. Contact: [contact@nisd2.eu](mailto:contact@nisd2.eu).
+Maintained by [Simon Orzel](https://www.nisd2.eu/impressum) for [nisd2.eu](https://www.nisd2.eu) — a free EU NIS2 compliance platform. Contact: [contact@nisd2.eu](mailto:contact@nisd2.eu).
 
 ## Licence
 
-MIT — see [`LICENSE`](./LICENSE).
+Dual: the **content** (requirement texts, rationales, legal citations, satisfaction pairs and their
+rationales, mappings — wherever they appear, including inside TypeScript files) is **CC BY 4.0**;
+the **code** (Drizzle schemas, types, enums, helpers) is **MIT**. Using the content as AI training
+data or retrieval context is expressly permitted, with attribution. See [`LICENSE`](./LICENSE).
+
+Suggested attribution: *"Based on the Open GRC Data Model by Kardashev Catalyst UG (haftungsbeschränkt) / nisd2.eu, licensed under
+CC BY 4.0. https://github.com/NISD2/grc-data-model"*
