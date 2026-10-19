@@ -1,14 +1,16 @@
 import {
-  pgTable,
-  uuid,
-  varchar,
-  text,
   boolean,
-  integer,
-  timestamp,
   date,
   index,
+  integer,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+  varchar,
 } from "drizzle-orm/pg-core";
+import { assetHostingEnum, assetMfaMethodEnum } from "../enums";
+import { supplier } from "./supplier";
 
 export const asset = pgTable(
   "asset",
@@ -18,7 +20,12 @@ export const asset = pgTable(
 
     name: varchar("name", { length: 255 }).notNull(),
     type: varchar("type", { length: 100 }).notNull(),
+    // What the company says the thing is and does, in its own words.
     description: text("description"),
+    // The catalogue item the asset was listed as (lib/asset-inventory/catalog.ts), kept when 2.2
+    // renames it to the product, so the walk still knows a backup system or a line nobody signs
+    // in to. Null for an asset of the company's own. Migration 0006 filled it from the names.
+    catalogId: varchar("catalog_id", { length: 80 }),
 
     // BSI-200-2 §8.1 — identical assets grouped, e.g. "45 laptops"
     quantity: integer("quantity").default(1).notNull(),
@@ -27,6 +34,15 @@ export const asset = pgTable(
     isCritical: boolean("is_critical").default(false),
     owner: varchar("owner", { length: 255 }),
     location: varchar("location", { length: 255 }),
+    // Answered on 2.2 for what runs software; null until then. Who provides it is asset_provider.
+    hosting: assetHostingEnum("hosting"),
+
+    // Superseded by asset_provider, which allows several providers per asset and was backfilled
+    // from this column (migration 0005). No code reads or writes it any more; it is dropped once
+    // no running release does either.
+    supplierId: uuid("supplier_id").references(() => supplier.id, {
+      onDelete: "set null",
+    }),
 
     ipAddress: varchar("ip_address", { length: 45 }),
     hostname: varchar("hostname", { length: 255 }),
@@ -38,6 +54,9 @@ export const asset = pgTable(
     privilegedAccountCount: integer("privileged_account_count").default(0),
 
     hasMfa: boolean("has_mfa").default(false),
+    // Which second factor signing in takes; it can differ per program (an app here, codes by
+    // email there). It means something only while has_mfa is true, and readers ignore it otherwise.
+    mfaMethod: assetMfaMethodEnum("mfa_method"),
     encryptionAtRest: varchar("encryption_at_rest", { length: 100 }),
     encryptionInTransit: varchar("encryption_in_transit", { length: 100 }),
     cryptoImplementation: varchar("crypto_implementation", { length: 255 }),
@@ -64,5 +83,6 @@ export const asset = pgTable(
     index("idx_asset_company").on(table.companyId),
     index("idx_asset_type").on(table.type),
     index("idx_asset_critical").on(table.isCritical),
+    index("idx_asset_supplier").on(table.supplierId),
   ],
 );
